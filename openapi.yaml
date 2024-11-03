@@ -1,0 +1,442 @@
+openapi: 3.0.0
+info:
+  title: 'Hack Jak Brno API'
+  version: '1.0'
+paths:
+  /api/login:
+    post:
+      tags:
+        - auth
+      summary: 'Login a user'
+      description: 'Handle an incoming authentication request.'
+      operationId: bc76a9d52929cab7a147ca7b5c527430
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              type: object
+      responses:
+        '200':
+          description: 'The data'
+  /api/register:
+    post:
+      tags:
+        - auth
+      summary: 'Register a user'
+      description: 'Handle an incoming registration request.'
+      operationId: 18235ea6963e661c49bf381065779d6a
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              type: object
+      responses:
+        '200':
+          description: 'The data'
+  /api/chats:
+    get:
+      tags:
+        - chats
+      summary: 'Index all chats'
+      operationId: 90d00c7e15d37a226e803f3b149b428d
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatResponse'
+    post:
+      tags:
+        - chats
+      summary: 'Store a new chat'
+      operationId: eb1966d9528bc4c714356888b5ed4c2b
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - organisation_id
+              properties:
+                organisation_id:
+                  type: integer
+                  example: 2347
+                ward_id:
+                  description: 'Id of a patient I am representing i.e. my child'
+                  type: integer
+                  example: 2334
+              type: object
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+  '/api/chats/{chatId}':
+    get:
+      tags:
+        - chats
+      summary: 'Show chat with given id'
+      operationId: a99bfec1ef50ab8418a8adfe64b5dadd
+      parameters:
+        - name: chatId
+          in: path
+          example: 7253
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+  '/api/chats/{chatId}/messages':
+    get:
+      tags:
+        - chats
+      summary: 'Index all messages for a chat with given id'
+      operationId: 05871928f35ea87ca90b181b9f46c118
+      parameters:
+        - name: chatId
+          in: path
+          example: 27316
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageResponse'
+    post:
+      tags:
+        - chats
+      summary: 'Store new message to a chat with given id'
+      operationId: 1c8e0955a910fd5e07520425cd50c45f
+      parameters:
+        - name: chatId
+          in: path
+          example: 2342
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - text
+              properties:
+                text:
+                  type: string
+                  example: 'Hello, I need vysetreni ASAP.'
+              type: object
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+  '/api/chats/{chatId}/suggestions':
+    get:
+      tags:
+        - chats
+      summary: 'Get suggestions what to reply'
+      operationId: a548e6ef16f78b4765fc5c4636f23a56
+      parameters:
+        - name: chatId
+          in: path
+          example: 3246
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ChatSuggestionResponse'
+  '/api/chats/{chatId}/patient-dataset':
+    get:
+      tags:
+        - chats
+      summary: 'Get relevant information from patient database'
+      operationId: 1fa124a71e27ca8e88cd61aff9ddc9b1
+      parameters:
+        - name: chatId
+          in: path
+          example: 346
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientDatasetItemResponse'
+  /api/documents:
+    get:
+      tags:
+        - documents
+      summary: 'Index all documents'
+      operationId: 479e53af7d4820aecb8f9534fdbe21aa
+      parameters:
+        - name: patient_id
+          in: query
+          description: 'Id of the patient for which I want to list documents for'
+          required: false
+          schema:
+            type: int
+        - name: organisation_id
+          in: query
+          description: 'Id of the organisation for which I want to list documents for'
+          required: false
+          schema:
+            type: int
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DocumentResponse'
+    post:
+      tags:
+        - documents
+      summary: 'Store a new document'
+      operationId: 9b247d60e8834d470666fba8e773edb4
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                document:
+                  type: string
+                  format: binary
+              type: object
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentResponse'
+  '/api/documents/{documentId}':
+    get:
+      tags:
+        - documents
+      summary: 'Show document with given id'
+      operationId: 69967c7c9c616bf1b78a205ae8b916ad
+      parameters:
+        - name: documentId
+          in: path
+          example: 3482
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentResponse'
+  /api/me/wards:
+    get:
+      tags:
+        - me
+      summary: 'Get list of my wards (who am I guardian to e.g. children)'
+      operationId: 8fa4ad1d8b648c7b3d94a5e73860b821
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+  /api/organisations:
+    get:
+      tags:
+        - organisations
+      summary: 'Index all organisations'
+      operationId: 92314f60542c1600b216a572782659cb
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganisationResponse'
+  '/api/organisations/{organisationId}':
+    get:
+      tags:
+        - organisations
+      summary: 'Show organisation with given id'
+      operationId: 5754beab198485fcc8be35f2d4ec5238
+      parameters:
+        - name: organisationId
+          in: path
+          example: 192
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganisationResponse'
+  '/api/organisations/{organisationId}/patients':
+    get:
+      tags:
+        - organisations
+      summary: 'Index organisation patients'
+      operationId: 2d9a3330b8d6d099c0062d31d531a2c9
+      parameters:
+        - name: organisationId
+          in: path
+          example: 192
+      responses:
+        '200':
+          description: 'The data'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrganisationResponse'
+components:
+  schemas:
+    DocumentResponse:
+      properties:
+        document_id:
+          type: integer
+        raw_text:
+          type: string
+        patient_id:
+          type: integer
+        hl7_fhir_data:
+          type: object
+      type: object
+    ChatResponse:
+      properties:
+        chat_id:
+          type: integer
+        organisation:
+          $ref: '#/components/schemas/OrganisationResponse'
+        patient:
+          $ref: '#/components/schemas/UserResponse'
+        guardian:
+          oneOf:
+            - $ref: '#/components/schemas/UserResponse'
+          nullable: true
+      type: object
+    MessageResponse:
+      properties:
+        message_id:
+          type: integer
+        author:
+          $ref: '#/components/schemas/UserResponse'
+        chat_id:
+          type: integer
+        is_organisation_message:
+          type: boolean
+        text:
+          type: string
+      type: object
+    ChatSuggestionResponse:
+      properties:
+        hash:
+          type: string
+        text:
+          type: string
+      type: object
+    PatientDatasetItemResponse:
+      properties:
+        hash:
+          type: string
+        summary:
+          type: string
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentResponse'
+      type: object
+    OrganisationResponse:
+      properties:
+        organisation_id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        logo:
+          $ref: '#/components/schemas/FileUploadResponse'
+        hospital:
+          $ref: '#/components/schemas/HospitalResponse'
+      type: object
+    UserResponse:
+      properties:
+        user_id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+      type: object
+    FileUploadResponse:
+      properties:
+        file_upload_id:
+          type: integer
+        asset_location:
+          type: string
+      type: object
+    HospitalResponse:
+      properties:
+        hospital_id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        logo:
+          $ref: '#/components/schemas/FileUploadResponse'
+      type: object
+tags:
+  - name: auth
+    description: auth
+  - name: chats
+    description: chats
+  - name: documents
+    description: documents
+  - name: me
+    description: me
+  - name: organisations
+    description: organisations
